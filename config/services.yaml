@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    contao_news_filter_event.news_list_hook_listener:
+        class: InspiredMinds\ContaoNewsFilterEvent\EventListener\NewsListHookListener
+        arguments:
+            - '@event_dispatcher'
+            - '@contao.security.token_checker'
+        tags:
+            - { name: contao.hook, hook: newsListCountItems, priority: 1000 }
+            - { name: contao.hook, hook: newsListFetchItems, priority: 1000 }
