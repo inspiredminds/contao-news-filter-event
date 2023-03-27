@@ -41,3 +41,6 @@ class AuthorNewsFilterListener
     }
 }
 ```
+
+See also [`inspiredminds/contao-categories-news-filter`](https://github.com/inspiredminds/contao-categories-news-filter)
+for another example.
