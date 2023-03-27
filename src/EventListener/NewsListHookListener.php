@@ -126,7 +126,7 @@ class NewsListHookListener
                     $order .= "$t.date DESC";
             }
 
-            $event->setOption('order', $order);
+            $event->addOption('order', $order);
         }
     }
 
