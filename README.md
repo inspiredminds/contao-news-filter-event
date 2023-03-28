@@ -17,8 +17,10 @@ For example, the following event listener would filter the news list via an auth
 namespace App\EventListener;
 
 use InspiredMinds\ContaoNewsFilterEvent\Event\NewsFilterEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+#[AsEventListener]
 class AuthorNewsFilterListener
 {
     public function __construct(private RequestStack $requestStack)
@@ -28,7 +30,7 @@ class AuthorNewsFilterListener
     public function __invoke(NewsFilterEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest();
-        $authorId = (int) $request->query->get('author');
+        $authorId = max(0, (int) $request->query->get('author'));
 
         if (!$authorId) {
             return;
