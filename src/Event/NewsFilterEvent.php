@@ -29,6 +29,7 @@ class NewsFilterEvent extends Event
     private array $values = [];
     private array $options = [];
     private bool $addDefaults = true;
+    private bool $forceEmptyResult = false;
 
     public function __construct(array $archives, ?bool $featured, ?int $limit, ?int $offset, Module $module, bool $countOnly)
     {
@@ -192,5 +193,20 @@ class NewsFilterEvent extends Event
     public function getAddDefaults(): bool
     {
         return $this->addDefaults;
+    }
+
+    /**
+     * Whether the news list should not output any news at all.
+     */
+    public function setForceEmptyResult(bool $forceEmptyResult): self
+    {
+        $this->forceEmptyResult = $forceEmptyResult;
+
+        return $this;
+    }
+
+    public function getForceEmptyResult(): bool
+    {
+        return $this->forceEmptyResult;
     }
 }

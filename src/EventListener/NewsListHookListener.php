@@ -17,7 +17,6 @@ use Contao\Date;
 use Contao\Model\Collection;
 use Contao\Module;
 use Contao\NewsModel;
-use Exception;
 use InspiredMinds\ContaoNewsFilterEvent\Event\NewsFilterEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -53,8 +52,12 @@ class NewsListHookListener
      */
     private function execute(array $archives, ?bool $featured, ?int $limit, ?int $offset, Module $module, bool $countOnly)
     {
-        $event = new NewsFilterEvent($archives, $featured, $limit, $offset, $module, true);
+        $event = new NewsFilterEvent($archives, $featured, $limit, $offset, $module, $countOnly);
         $this->eventDispatcher->dispatch($event);
+
+        if ($event->getForceEmptyResult()) {
+            return null;
+        }
 
         // If no additional queries or options where added to the event,
         // discard this hook execution, so that Contao's default behavior applies.
