@@ -44,5 +44,4 @@ class AuthorNewsFilterListener
 }
 ```
 
-See also [`inspiredminds/contao-categories-news-filter`](https://github.com/inspiredminds/contao-categories-news-filter)
-for another example.
+See [here](https://packagist.org/packages/inspiredminds/contao-news-filter-event/dependents?order_by=name) for further examples.
