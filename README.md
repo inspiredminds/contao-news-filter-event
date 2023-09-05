@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[AsEventListener]
 class AuthorNewsFilterListener
 {
-    public function __construct(private RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
     }
 
