@@ -17,28 +17,30 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class NewsFilterEvent extends Event
 {
-    private array $archives;
-    private ?bool $featured;
-    private ?int $limit;
-    private ?int $offset;
-    private Module $module;
-    private bool $countOnly;
-    /** @var list<string> */
+    /**
+     * @var list<string>
+     */
     private array $columns = [];
-    /** @var list<mixed> */
+
+    /**
+     * @var list<mixed>
+     */
     private array $values = [];
+
     private array $options = [];
+
     private bool $addDefaults = true;
+
     private bool $forceEmptyResult = false;
 
-    public function __construct(array $archives, ?bool $featured, ?int $limit, ?int $offset, Module $module, bool $countOnly)
-    {
-        $this->archives = $archives;
-        $this->featured = $featured;
-        $this->limit = $limit;
-        $this->offset = $offset;
-        $this->module = $module;
-        $this->countOnly = $countOnly;
+    public function __construct(
+        private readonly array $archives,
+        private readonly bool|null $featured,
+        private readonly int|null $limit,
+        private readonly int|null $offset,
+        private readonly Module $module,
+        private readonly bool $countOnly,
+    ) {
     }
 
     public function getArchives(): array
@@ -46,17 +48,17 @@ class NewsFilterEvent extends Event
         return $this->archives;
     }
 
-    public function getFeatured(): ?bool
+    public function getFeatured(): bool|null
     {
         return $this->featured;
     }
 
-    public function getLimit(): ?int
+    public function getLimit(): int|null
     {
         return $this->limit;
     }
 
-    public function getOffset(): ?int
+    public function getOffset(): int|null
     {
         return $this->offset;
     }
@@ -83,7 +85,7 @@ class NewsFilterEvent extends Event
 
     public function addColumns(array $columns): self
     {
-        $this->columns = array_merge($this->columns, $columns);
+        $this->columns = [...$this->columns, ...$columns];
 
         return $this;
     }
@@ -115,7 +117,7 @@ class NewsFilterEvent extends Event
 
     public function addValues(array $values): self
     {
-        $this->values = array_merge($this->values, $values);
+        $this->values = [...$this->values, ...$values];
 
         return $this;
     }
@@ -140,7 +142,7 @@ class NewsFilterEvent extends Event
 
     public function hasData(): bool
     {
-        return !empty($this->columns) || !empty($this->options);
+        return [] !== $this->columns || [] !== $this->options;
     }
 
     public function addOption(string $key, $option, bool $overwrite = false): self
@@ -155,9 +157,9 @@ class NewsFilterEvent extends Event
     public function addOptions(array $options, bool $overwrite = false): self
     {
         if ($overwrite) {
-            $this->options = array_merge($this->options, $options);
+            $this->options = [...$this->options, ...$options];
         } else {
-            $this->options = array_merge($options, $this->options);
+            $this->options = [...$options, ...$this->options];
         }
 
         return $this;

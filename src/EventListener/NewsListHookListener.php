@@ -22,19 +22,16 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class NewsListHookListener
 {
-    private EventDispatcherInterface $eventDispatcher;
-    private TokenChecker $tokenChecker;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, TokenChecker $tokenChecker)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->tokenChecker = $tokenChecker;
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly TokenChecker $tokenChecker,
+    ) {
     }
 
     /**
      * @return false|int
      */
-    public function onNewsListCountItems(array $archives, ?bool $featured, Module $module)
+    public function onNewsListCountItems(array $archives, bool|null $featured, Module $module)
     {
         return $this->execute($archives, $featured, null, null, $module, true);
     }
@@ -42,7 +39,7 @@ class NewsListHookListener
     /**
      * @return false|Collection<array-key, NewsModel>|NewsModel|null
      */
-    public function onNewsListFetchItems(array $archives, ?bool $featured, int $limit, int $offset, Module $module)
+    public function onNewsListFetchItems(array $archives, bool|null $featured, int $limit, int $offset, Module $module)
     {
         return $this->execute($archives, $featured, $limit, $offset, $module, false);
     }
@@ -50,7 +47,7 @@ class NewsListHookListener
     /**
      * @return false|int|Collection<array-key, NewsModel>|NewsModel|null
      */
-    private function execute(array $archives, ?bool $featured, ?int $limit, ?int $offset, Module $module, bool $countOnly)
+    private function execute(array $archives, bool|null $featured, int|null $limit, int|null $offset, Module $module, bool $countOnly)
     {
         $event = new NewsFilterEvent($archives, $featured, $limit, $offset, $module, $countOnly);
         $this->eventDispatcher->dispatch($event);
@@ -76,7 +73,7 @@ class NewsListHookListener
         return NewsModel::findBy($event->getColumns(), $event->getValues(), $event->getOptions());
     }
 
-    private function addDefaults(NewsFilterEvent $event, array $archives, ?bool $featured, ?int $limit, ?int $offset, Module $module): void
+    private function addDefaults(NewsFilterEvent $event, array $archives, bool|null $featured, int|null $limit, int|null $offset, Module $module): void
     {
         $t = NewsModel::getTable();
         $event->addColumn("$t.pid IN(".implode(',', array_map('\intval', $archives)).')');
@@ -108,26 +105,13 @@ class NewsListHookListener
                 $order .= "$t.featured DESC, ";
             }
 
-            switch ($module->news_order) {
-                case 'order_headline_asc':
-                    $order .= "$t.headline";
-                    break;
-
-                case 'order_headline_desc':
-                    $order .= "$t.headline DESC";
-                    break;
-
-                case 'order_random':
-                    $order .= 'RAND()';
-                    break;
-
-                case 'order_date_asc':
-                    $order .= "$t.date";
-                    break;
-
-                default:
-                    $order .= "$t.date DESC";
-            }
+            match ($module->news_order) {
+                'order_headline_asc' => $order .= "$t.headline",
+                'order_headline_desc' => $order .= "$t.headline DESC",
+                'order_random' => $order .= 'RAND()',
+                'order_date_asc' => $order .= "$t.date",
+                default => $order .= "$t.date DESC",
+            };
 
             $event->addOption('order', $order);
         }
