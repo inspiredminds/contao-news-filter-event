@@ -18,9 +18,10 @@ use Contao\Model\Collection;
 use Contao\Module;
 use Contao\NewsModel;
 use InspiredMinds\ContaoNewsFilterEvent\Event\NewsFilterEvent;
+use InspiredMinds\ContaoNewsFilterEvent\NewsListHookListenerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class NewsListHookListener
+class NewsListHookListener implements NewsListHookListenerInterface
 {
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
