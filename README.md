@@ -30,9 +30,9 @@ class AuthorNewsFilterListener
     public function __invoke(NewsFilterEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest();
-        $authorId = max(0, (int) $request->query->get('author'));
+        $authorId = (int) $request->query->get('author');
 
-        if (!$authorId) {
+        if ($authorId <= 0) {
             return;
         }
 
@@ -40,6 +40,25 @@ class AuthorNewsFilterListener
             ->addColumn('tl_news.author = ?')
             ->addValue($authorId)
         ;
+    }
+}
+```
+
+Or the following would force sorting all news by their subheadline:
+
+```php
+// src/EventListener/AuthorNewsFilterListener.php
+namespace App\EventListener;
+
+use InspiredMinds\ContaoNewsFilterEvent\Event\NewsFilterEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+#[AsEventListener]
+class AuthorNewsFilterListener
+{
+    public function __invoke(NewsFilterEvent $event): void
+    {
+        $event->addOption('order', 'tl_news.subheadline ASC', true);
     }
 }
 ```
