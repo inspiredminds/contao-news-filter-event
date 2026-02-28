@@ -77,7 +77,7 @@ class NewsListHookListener implements NewsListHookListenerInterface
     private function addDefaults(NewsFilterEvent $event, array $archives, bool|null $featured, int|null $limit, int|null $offset, Module $module): void
     {
         $t = NewsModel::getTable();
-        $event->addColumn("$t.pid IN(".implode(',', array_map('\intval', $archives)).')');
+        $event->addColumn("$t.pid IN(".implode(',', array_map(\intval(...), $archives)).')');
 
         if (true === $featured) {
             $event->addColumn("$t.featured='1'");

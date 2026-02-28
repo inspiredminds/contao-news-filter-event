@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the Contao News Filter Event extension.
+ *
+ * (c) INSPIRED MINDS
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 use Contao\EasyCodingStandard\Fixer\CommentLengthFixer;
 use Contao\EasyCodingStandard\Set\SetList;
 use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
@@ -11,6 +19,8 @@ return ECSConfig::configure()
     ->withSets([SetList::CONTAO])
     ->withPaths([
         __DIR__.'/src',
+        __DIR__.'/ecs.php',
+        __DIR__.'/rector.php',
     ])
     ->withSkip([
         CommentLengthFixer::class,
